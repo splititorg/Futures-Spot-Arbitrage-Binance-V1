@@ -60,14 +60,18 @@ pub async fn insert_arb_diff_signal(diff_signal: model::ArbDiffSignal) -> anyhow
         arb_coin_price_id,
         price_diff,
         price_diff_rate,
+        spot_price,
+        future_price,
         created,
         updated
-        ) values (?, ?, ?, ?, ?, ?)",
+        ) values (?, ?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(diff_signal.symbol)
     .bind(diff_signal.arb_coin_price_id)
     .bind(diff_signal.price_diff)
     .bind(diff_signal.price_diff_rate)
+    .bind(diff_signal.spot_price)
+    .bind(diff_signal.future_price)
     .bind(diff_signal.created)
     .bind(diff_signal.updated)
     .execute(db::get_db()?.database())
@@ -90,11 +94,15 @@ pub async fn update_arb_diff_signal_by_id(
     id: i64,
     price_diff: Decimal,
     price_diff_rate: Decimal,
+    spot_price: Decimal,
+    future_price: Decimal,
     updated: String,
 ) -> anyhow::Result<u64> {
-    let rows = sqlx::query("update arb_diff_signal set price_diff = ?, price_diff_rate = ?, updated = ? where id = ?")
+    let rows = sqlx::query("update arb_diff_signal set price_diff = ?, price_diff_rate = ?, spot_price = ?, future_price = ?, updated = ? where id = ?")
         .bind(price_diff)
         .bind(price_diff_rate)
+        .bind(spot_price)
+        .bind(future_price)
         .bind(updated)
         .bind(id)
         .execute(db::get_db()?.database())

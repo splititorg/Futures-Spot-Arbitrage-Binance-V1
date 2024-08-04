@@ -9,6 +9,8 @@ pub struct ArbDiffSignal {
     pub arb_coin_price_id: i64,
     pub price_diff: Decimal,
     pub price_diff_rate: Decimal,
+    pub spot_price: Decimal,
+    pub future_price: Decimal,
     pub created: String,
     pub updated: String,
     pub bak: Option<String>,

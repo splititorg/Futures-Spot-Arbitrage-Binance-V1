@@ -100,6 +100,8 @@ pub async fn get_diff_signal() {
                         existing_signal.id,
                         price_diff,
                         price_diff_rate,
+                        coin_price.spot_price.clone(),
+                        coin_price.future_price.clone(),
                         updated.clone(),
                     ).await {
                         error!("{:?}", e);
@@ -113,6 +115,8 @@ pub async fn get_diff_signal() {
                             arb_coin_price_id: coin_price.id,
                             price_diff,
                             price_diff_rate,
+                            spot_price: coin_price.spot_price.clone(),
+                            future_price: coin_price.future_price.clone(),
                             updated: updated.clone(),
                             created: updated.clone(),
                             bak: None,
