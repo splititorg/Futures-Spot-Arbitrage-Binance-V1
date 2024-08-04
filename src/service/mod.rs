@@ -3,7 +3,10 @@ mod common;
 pub mod diff_rate;
 pub mod price;
 pub mod stable_coin_hedging;
+mod diff_price;
 
+pub use diff_price::set_price_data;
+pub use diff_price::get_diff_signal;
 pub use binance_strategy::event_start;
 pub use binance_strategy::inspect_strategy;
 pub use binance_strategy::range_new_strategy;
