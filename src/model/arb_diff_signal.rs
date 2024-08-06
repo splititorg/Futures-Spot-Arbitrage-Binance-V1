@@ -6,12 +6,14 @@ use serde::{Deserialize, Serialize};
 pub struct ArbDiffSignal {
     pub id: i64,
     pub symbol: String,
-    pub arb_coin_price_id: i64,
+    pub from_compare: String,
+    pub to_compare: String,
     pub price_diff: Decimal,
     pub price_diff_rate: Decimal,
-    pub spot_price: Decimal,
-    pub future_price: Decimal,
+    pub binance_futures_price: Decimal,
+    pub bybit_futures_price: Decimal,
+    pub kucoin_futures_price: Decimal,
     pub created: String,
     pub updated: String,
-    pub bak: Option<String>,
 }
+

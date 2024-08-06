@@ -1,6 +1,7 @@
 use std::sync::atomic::{AtomicBool, Ordering};
 
-use futures::StreamExt;
+use futures::{SinkExt, StreamExt};
+use log::error;
 use serde_json::from_str;
 use tokio::net::TcpStream;
 use tokio_tungstenite::tungstenite::handshake::client::Response;
@@ -109,10 +110,7 @@ impl<'a, WE: serde::de::DeserializeOwned> WebSockets<'a, WE> {
     }
 
     /// Connect to a websocket endpoint
-    pub async fn connect(&mut self, endpoint: &str) -> Result<()> {
-        let wss: String = format!("{}/{}/{}", self.conf.ws_endpoint, WS_ENDPOINT, endpoint);
-        let url = Url::parse(&wss)?;
-
+    pub async fn connect(&mut self, url: Url) -> Result<()> {
         self.handle_connect(url).await
     }
 
@@ -142,6 +140,16 @@ impl<'a, WE: serde::de::DeserializeOwned> WebSockets<'a, WE> {
         }
     }
 
+    /// Send a message to the WebSocket
+    pub async fn send_message(&mut self, message: Message) -> Result<()> {
+        if let Some((ref mut socket, _)) = self.socket {
+            socket.send(message).await?;
+            Ok(())
+        } else {
+            Err(Error::Msg("WebSocket connection is not established".to_string()))
+        }
+    }
+
     /// Disconnect from the endpoint
     pub async fn disconnect(&mut self) -> Result<()> {
         if let Some(ref mut socket) = self.socket {
@@ -165,8 +173,16 @@ impl<'a, WE: serde::de::DeserializeOwned> WebSockets<'a, WE> {
                         if msg.is_empty() {
                             return Ok(());
                         }
-                        let event: WE = from_str(msg.as_str())?;
-                        (self.handler)(event)?;
+                        match from_str::<WE>(msg.as_str()) {
+                            Ok(event) => {
+                                if let Err(e) = (self.handler)(event) {
+                                    error!("Handler error: {:?}", e);
+                                }
+                            }
+                            Err(e) => {
+                                error!("Failed to parse message: {:?}", e);
+                            }
+                        }
                     }
                     Message::Ping(_) | Message::Pong(_) | Message::Binary(_) | Message::Frame(_) => {}
                     Message::Close(e) => {
@@ -176,5 +192,15 @@ impl<'a, WE: serde::de::DeserializeOwned> WebSockets<'a, WE> {
             }
         }
         Ok(())
+    }
+
+
+}
+impl<'a, WE: serde::de::DeserializeOwned> WebSockets<'a, WE> {
+    // Other methods...
+
+    /// Check if the WebSocket is closed
+    pub fn is_closed(&self) -> bool {
+        self.socket.is_none()
     }
 }
