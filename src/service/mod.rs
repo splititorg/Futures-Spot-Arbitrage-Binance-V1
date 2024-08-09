@@ -134,7 +134,7 @@ pub async fn kucoin_spot_all_ticker(price_tx: UnboundedSender<PriceStream>) {
 pub async fn kucoin_futures_all_ticker(price_tx: UnboundedSender<PriceStream>) {
     let keep_running = AtomicBool::new(true);
     let message = KUCOIN_MESSAGE;
-    let url = "wss://ws-api.kucoin.com/endpoint?token=2neAiuYvAU61ZDXANAGAsiL4-iAExhsBXZxftpOeh_55i3Ysy2q2LEsEWU64mdzUOPusi34M_wGoSf7iNyEWJ_pgOlZ4v6jzV4oNpZG0un-0ie3eCfz_WtiYB9J6i9GjsxUuhPw3BlrzazF6ghq4L3JVkuMJ0tGn9ryoLGr9G7w=.3M64fcKZtk-elubyeLKJ0Q==";
+    let url = "wss://ws-api.kucoin.com/endpoint?token=2neAiuYvAU61ZDXANAGAsiL4-iAExhsBXZxftpOeh_55i3Ysy2q2LEsEWU64mdzUOPusi34M_wGoSf7iNyEWJ_K5H63P8kFWJc4EK10_nKiOZxmSM3PY-9iYB9J6i9GjsxUuhPw3BlrzazF6ghq4LzJLZP8BvaT_BRUoz0xJxR0=.G2UFzARHJwRctOldHX6dyw==";
 
     handle_websocket(url, Some(message), Platform::Kucoin, Market::Futures, price_tx, &keep_running).await;
 }
